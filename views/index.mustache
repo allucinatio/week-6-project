@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Gabble</title>
+  </head>
+  <body>
+  <nav>
+
+    <div class="nav">
+      <a href="/">Gabble</a>
+      <a href="/post">Create a new post</a>
+      <a href="">Logged in as {{#gabble}}{{user.username}}{{/gabble}}</a>
+      <a href="/logout">Log out</a>
+    </div>
+
+  </nav>
+  <main>
+    {{#gabble}}
+    <div class="posts-container">
+      {{post.author}} posted:
+      <br>
+      {{post.post}}
+      <br>
+      posted at: {{post.dateTime}}
+      <br>
+      liked by: {{post.likes}}
+    </div>
+    {{/gabble}}
+  </main>
+  </body>
+</html>
