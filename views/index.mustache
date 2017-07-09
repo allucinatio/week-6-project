@@ -10,7 +10,7 @@
     <div class="nav">
       <a href="/">Gabble</a>
       <a href="/post">Create a new post</a>
-      <a href="">Logged in as {{#gabble}}{{user.username}}{{/gabble}}</a>
+      <a href="">Logged in as {{#gabble}}{{#user}}{{username}}{{/user}}{{/gabble}}</a>
       <a href="/logout">Log out</a>
     </div>
 
@@ -18,13 +18,15 @@
   <main>
     {{#gabble}}
     <div class="posts-container">
-      {{post.author}} posted:
+      {{#post}}
+      {{author}} posted:
       <br>
-      {{post.post}}
+      {{post}}
       <br>
-      posted at: {{post.dateTime}}
+      posted at: {{dateTime}}
       <br>
-      liked by: {{post.likes}}
+      liked by: {{likes}}
+      {{/post}}
     </div>
     {{/gabble}}
   </main>
