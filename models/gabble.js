@@ -11,7 +11,7 @@ const userSchema = new Schema({
 
 const postSchema = new Schema({
   author    : {type:String, required:true},
-  post      : {type:String, required:true},
+  post      : {type:String, required:true, maxlength: 140},
   dateTime  : {type:Date, required:true, default: Date.now},
   likes     : [{type:String, required:true}]
 });
