@@ -94,7 +94,7 @@ function checkAuthentication(req, res){
 
     return models.Post.find().then(function(user, post){
     res.render('index', { gabble : user, post });
-    
+
     })
   }
   else {
@@ -122,6 +122,7 @@ function savePost(req, res){
   })
 
 };
+
 
 //
 // ROUTES
