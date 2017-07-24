@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressValidator());
 
 mongoose.Promise = require('bluebird');
-mongoose.connect('mongodb://heroku_11zg8184:n1qcm5039pgklfgen12tk5ihqv@ds137139.mlab.com:37139/heroku_11zg8184');
+mongoose.connect('mongodb://localhost:27017/gabble');
 
 app.use(session({
   secret: 'keyboard cat',

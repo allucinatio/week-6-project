@@ -17,37 +17,48 @@ router.use(bodyParser.urlencoded({extended: false}));
 
 
 // establish dummy data for testing
-let user = new models.User({
-  username: "testUser",
-  password: "password"
-});
-user.save().then(function() {
-    console.log("user added to database");
-  }).catch(function(err) {
-    console.log("error adding user to the database");
-    console.log(err);
-  });
-
-
-let post = new models.Post({
-  author: "testUser",
-  post: "This is a test post that is a bunch of characters",
-  dateTime: new Date,
-  likes: [
-    'user1',
-    'user2',
-    'user3'
-  ]
-});
-post.save().then(function() {
-    console.log("post added to database");
-  }).catch(function(err) {
-    console.log("error adding post to the database");
-    console.log(err);
-  });
+// let user = new models.User({
+//   username: "testUser",
+//   password: "password"
+// });
+// user.save().then(function() {
+//     console.log("user added to database");
+//   }).catch(function(err) {
+//     console.log("error adding user to the database");
+//     console.log(err);
+//   });
+//
+//
+// let post = new models.Post({
+//   author: "testUser",
+//   post: "This is a test post that is a bunch of characters",
+//   dateTime: new Date,
+//   likes: [
+//     'user1',
+//     'user2',
+//     'user3'
+//   ]
+// });
+// post.save().then(function() {
+//     console.log("post added to database");
+//   }).catch(function(err) {
+//     console.log("error adding post to the database");
+//     console.log(err);
+//   });
 // end dummy data
 
-
+function register(req, res){
+  let newUser = new models.User({
+    username: req.body.username,
+    password: req.body.password
+  });
+  newUser.save().then(function(err, newUser) {
+    console.log("new user registered!")
+    return res.redirect('/');
+  }).catch(function(err){
+    console.log("error registering user " + err);
+  })
+}
 
 function authenticate(req, res){
   models.User.findOne({
@@ -61,12 +72,8 @@ function authenticate(req, res){
       console.log("couldn't find user");
     }
     console.log("logged in!");
-    // req.session.activeUser = req.body.username
-    user.activeUser = req.body.username;
-    user.save(function (err) {
-     if (err) return console.log("error saving active user" + err)
-     });
-    // use virtual property here to store active username?
+    req.session.activeUser = req.body.username;
+    console.log("req.session.activeUser is: " + req.session.activeUser);
     req.session.authenticated = true;
     res.redirect('/');
   })
@@ -105,9 +112,7 @@ function checkAuthentication(req, res){
 
 
 function savePost(req, res){
-
   console.log("submitted post in req.body is: " + req.body.post);
-
   let newPost = new models.Post({
     author: req.session.activeUser,
     post: req.body.post,
@@ -120,7 +125,28 @@ function savePost(req, res){
   }).catch(function(err){
     console.log("error saving post to db " + err)
   })
+};
 
+
+function likePost(req, res){
+  // http://mongoosejs.com/docs/api.html#model_Model.findByIdAndUpdate
+  console.log("req.body.like is " + req.body.like);
+  models.Post.findById(req.body.like).then(post => {
+    post.likes.push(req.session.activeUser);
+    post.save();
+  })
+  return res.redirect('/')
+};
+
+function deletePost(req, res){
+// http://mongoosejs.com/docs/api.html#model_Model.findByIdAndRemove
+    console.log("req.body.delete is " + req.body.delete);
+    models.Post.findByIdAndRemove(req.body.delete, function(err, post){
+      if (err) {
+        console.log("err at deletePost" + err);
+      }
+    });
+    return res.redirect('/');
 };
 
 
@@ -160,30 +186,16 @@ router.get('/signup', function(req, res){
   res.render('signup');
 });
 
-
 router.post('/signup', function(req, res) {
-
-  let newUser = new models.User({
-    username: req.body.username,
-    password: req.body.password
-  });
-  newUser.save().then(function(err, newUser) {
-    console.log("new user registered!")
-    return res.redirect('/');
-  }).catch(function(err){
-    console.log("error registering user " + err);
-  })
+  register(req, res);
 });
 
 router.post('/likes', function (req, res){
-  // http://mongoosejs.com/docs/api.html#model_Model.findByIdAndUpdate
-
-
+  likePost(req, res);
 })
 
 router.post('/delete', function(req, res){
-  // http://mongoosejs.com/docs/api.html#model_Model.findByIdAndRemove
-
+  deletePost(req, res);
 })
 
 
